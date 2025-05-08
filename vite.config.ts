@@ -8,15 +8,30 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    open: true, // Abre el navegador automáticamente
   },
   plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
+    react({
+      // Configuración adicional para React
+      jsxRuntime: 'automatic',
+      tsDecorators: true,
+    }),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+    extensions: ['.js', '.jsx', '.ts', '.tsx'] // Añadir extensiones soportadas
+  },
+  base: '/', // Importante para el routing
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      },
     },
   },
 }));
