@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebar.config";
+import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebarConfig"; // Corregido nombre del archivo
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SidebarProps {
@@ -115,6 +115,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     ));
   };
 
+  const dashboardPath = `/${user.role.toLowerCase()}/dashboard`;
+
   return (
     <div
       className={cn(
@@ -141,10 +143,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       <div className="px-4">
         <Link
-          to="/dashboard"
+          to={dashboardPath}
           className={cn(
             "flex items-center h-[40px] px-4 text-sm text-gray-300 hover:text-white transition-colors",
-            location.pathname === "/dashboard" ? "bg-blue-600 text-white" : "hover:bg-blue-600/10",
+            location.pathname === dashboardPath ? "bg-blue-600 text-white" : "hover:bg-blue-600/10",
             collapsed && "justify-center"
           )}
         >
