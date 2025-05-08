@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+  showPassword: boolean;
+}
+
 export function LoginForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
     showPassword: false
@@ -35,6 +40,11 @@ export function LoginForm() {
     }));
   };
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -43,9 +53,7 @@ export function LoginForm() {
       return;
     }
 
-    // Validación básica de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!validateEmail(formData.email)) {
       toast.error("Por favor ingresa un correo electrónico válido");
       return;
     }
@@ -55,7 +63,7 @@ export function LoginForm() {
     try {
       await login(formData.email, formData.password);
       toast.success("¡Bienvenido a HubSeguros!");
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       toast.error("No pudimos iniciar sesión. Por favor verifica tus credenciales.");
       console.error("Error en inicio de sesión:", error);
@@ -88,6 +96,7 @@ export function LoginForm() {
                 className="pl-10"
                 required
                 autoComplete="email"
+                aria-label="Correo electrónico"
               />
             </div>
           </div>
@@ -95,7 +104,7 @@ export function LoginForm() {
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Contraseña</Label>
               <Link 
-                to="/recuperar-password" 
+                to="/recuperar-contrasena" 
                 className="text-sm text-hubseguros-primary hover:text-blue-800 transition-colors"
               >
                 ¿Olvidaste tu contraseña?
@@ -112,6 +121,7 @@ export function LoginForm() {
                 className="pl-10"
                 required
                 autoComplete="current-password"
+                aria-label="Contraseña"
               />
               <TooltipProvider>
                 <Tooltip>
@@ -122,6 +132,7 @@ export function LoginForm() {
                       size="icon"
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                       onClick={togglePasswordVisibility}
+                      aria-label={formData.showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                     >
                       {formData.showPassword ? (
                         <EyeOff className="h-4 w-4 text-gray-500" />
