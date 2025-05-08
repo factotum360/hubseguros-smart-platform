@@ -1,16 +1,22 @@
-
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { Metadata } from "@/types/metadata"; // Asegúrate de tener este tipo definido
 
-const LoginPage = () => {
+// Metadatos de la página
+export const metadata: Metadata = {
+  title: "Iniciar Sesión | HubSeguros",
+  description: "Accede a tu cuenta de HubSeguros y gestiona tu negocio de seguros de manera eficiente",
+};
+
+const Login = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -67,4 +73,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
