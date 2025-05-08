@@ -1,4 +1,3 @@
-
 import { UserRole } from "@/types/user";
 
 export interface SidebarSection {
@@ -9,9 +8,7 @@ export interface SidebarSection {
 export interface SidebarItem {
   key: string;
   label: string;
-  icon?: string;
-  path?: string;
-  children?: SidebarItem[];
+  icon: string;
 }
 
 export type SidebarConfig = Record<UserRole, {
@@ -44,7 +41,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
       ]
     }
   },
-  
+
   [UserRole.AGENTE]: {
     dashboard: {
       path: '/agente/dashboard',
@@ -125,5 +122,5 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
 // Helper function to get full path for a section item
 export function getItemPath(role: UserRole, sectionKey: string, itemKey: string): string {
   const basePath = SIDEBAR_CONFIG[role].dashboard.path;
-  return `${basePath}/${sectionKey}/${itemKey}`;
+  return `${basePath}/${itemKey}`;
 }
