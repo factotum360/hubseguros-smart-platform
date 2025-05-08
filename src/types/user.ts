@@ -24,12 +24,12 @@ export interface User {
   email: string;
   role: UserRole;
   level: UserLevel;
-  status: UserStatus;
+  status?: UserStatus; // Hecho opcional para mantener compatibilidad
   phone?: string;
   avatar?: string;
   achievements?: Achievement[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date; // Hecho opcional para mantener compatibilidad
+  updatedAt?: Date; // Hecho opcional para mantener compatibilidad
   lastLogin?: Date;
   preferences?: UserPreferences;
 }
@@ -53,4 +53,20 @@ export interface UserPreferences {
   theme: 'light' | 'dark' | 'system';
   language: 'es' | 'en';
   timeZone: string;
+}
+
+// Utility type para el mock user
+export type MockUser = Pick<User, 'id' | 'name' | 'email' | 'role' | 'level'>;
+
+// Helper functions
+export function isValidRole(role: string): role is UserRole {
+  return Object.values(UserRole).includes(role as UserRole);
+}
+
+export function isValidLevel(level: string): level is UserLevel {
+  return Object.values(UserLevel).includes(level as UserLevel);
+}
+
+export function isValidStatus(status: string): status is UserStatus {
+  return Object.values(UserStatus).includes(status as UserStatus);
 }

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User, UserRole, UserLevel } from "@/types/user";
 
@@ -16,33 +15,35 @@ const MOCK_USER: User = {
   id: "1",
   name: "Usuario Demo",
   email: "demo@factotum.com",
-  role: UserRole.AGENTE,
+  role: UserRole.AGENCIA, // Cambiado a AGENCIA para probar la configuración del sidebar
   level: UserLevel.PRINCIPIANTE
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    // Inicialización perezosa del estado
+    const storedUser = localStorage.getItem("hubsegurosUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay una sesión guardada
-    const storedUser = localStorage.getItem("hubsegurosUser");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    // Solo necesitamos setear isLoading a false ya que el usuario ya se cargó
     setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simulación de autenticación
-    return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        // En una implementación real, esto vendría del backend
-        setUser(MOCK_USER);
-        localStorage.setItem("hubsegurosUser", JSON.stringify(MOCK_USER));
-        resolve();
-      }, 800);
-    });
+    try {
+      // Simulación de autenticación
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // En una implementación real, esto vendría del backend
+      setUser(MOCK_USER);
+      localStorage.setItem("hubsegurosUser", JSON.stringify(MOCK_USER));
+    } catch (error) {
+      console.error('Error durante el login:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
@@ -50,9 +51,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("hubsegurosUser");
   };
 
+  if (isLoading) {
+    return null; // o un componente de loading
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
-      {!isLoading && children}
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      isAuthenticated: !!user 
+    }}>
+      {children}
     </AuthContext.Provider>
   );
 };
