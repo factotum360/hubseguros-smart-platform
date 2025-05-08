@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Mail, Lock, User, Building2 } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function RegisterForm() {
@@ -42,10 +41,10 @@ export function RegisterForm() {
   };
 
   const togglePasswordVisibility = (field: 'password' | 'confirmPassword') => {
+    const visibilityField = field === 'password' ? 'showPassword' : 'showConfirmPassword';
     setFormData(prev => ({
       ...prev,
-      [field === 'password' ? 'showPassword' : 'showConfirmPassword']: 
-      !prev[field === 'password' ? 'showPassword' : 'showConfirmPassword']
+      [visibilityField]: !prev[visibilityField]
     }));
   };
 
@@ -83,14 +82,8 @@ export function RegisterForm() {
     setLoading(true);
     
     try {
-      await register({
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        companyName: formData.companyName,
-        userType: formData.userType
-      });
+      const { confirmPassword, showPassword, showConfirmPassword, ...registrationData } = formData;
+      await register(registrationData);
       
       toast.success("¡Registro exitoso! Bienvenido a HubSeguros");
       navigate("/dashboard");
@@ -177,23 +170,20 @@ export function RegisterForm() {
                 onChange={handleInputChange}
                 className="pl-10"
                 required
-                autoComplete="new-password"
               />
-              <Tooltip content={formData.showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => togglePasswordVisibility('password')}
-                >
-                  {formData.showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
-                  )}
-                </Button>
-              </Tooltip>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={() => togglePasswordVisibility('password')}
+              >
+                {formData.showPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-500" />
+                )}
+              </Button>
             </div>
           </div>
 
@@ -209,23 +199,20 @@ export function RegisterForm() {
                 onChange={handleInputChange}
                 className="pl-10"
                 required
-                autoComplete="new-password"
               />
-              <Tooltip content={formData.showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => togglePasswordVisibility('confirmPassword')}
-                >
-                  {formData.showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
-                  )}
-                </Button>
-              </Tooltip>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={() => togglePasswordVisibility('confirmPassword')}
+              >
+                {formData.showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-500" />
+                )}
+              </Button>
             </div>
           </div>
 
@@ -271,12 +258,12 @@ export function RegisterForm() {
       <CardFooter className="flex justify-center">
         <p className="text-sm text-gray-600">
           ¿Ya tienes una cuenta? 
-          <Link 
-            to="/login" 
+          <a 
+            href="/login" 
             className="ml-1 text-hubseguros-primary hover:text-blue-700 font-medium transition-colors"
           >
             Inicia sesión
-          </Link>
+          </a>
         </p>
       </CardFooter>
     </Card>
