@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -27,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebarConfig"; // Corregido nombre del archivo
+import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebar.config"; 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SidebarProps {
@@ -38,6 +39,9 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user } = useAuth();
   const location = useLocation();
+  
+  // New state to track which sections are expanded
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
   if (!user) return null;
 
@@ -96,8 +100,24 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <span className="ml-3 truncate">{item.label}</span>
         )}
+        
+        {!collapsed && item.badge && (
+          <Badge 
+            variant={item.badge.variant as any || "default"} 
+            className="ml-auto"
+          >
+            {item.badge.value}
+          </Badge>
+        )}
       </Link>
     );
+  };
+
+  const toggleSection = (sectionTitle: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionTitle]: !prev[sectionTitle]
+    }));
   };
 
   const renderSidebarSections = () => {
