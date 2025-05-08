@@ -1,4 +1,8 @@
-import { UserRole } from "@/types/user";
+export enum UserRole {
+  USUARIO = 'USUARIO',
+  AGENTE = 'AGENTE',
+  AGENCIA = 'AGENCIA'
+}
 
 export interface SidebarSection {
   title: string;
@@ -146,7 +150,7 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
       ]
     }
   }
-};
+} as const;
 
 // Helper functions
 export function getItemPath(role: UserRole, itemKey: string): string {

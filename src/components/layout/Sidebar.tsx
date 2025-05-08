@@ -29,7 +29,6 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebar.config";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -39,7 +38,6 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user } = useAuth();
   const location = useLocation();
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
   if (!user) return null;
 
@@ -83,8 +81,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         key={item.key}
         to={itemPath}
         className={cn(
-          "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors",
-          isActive && "bg-blue-600 text-white",
+          "flex items-center h-[40px] px-4 text-sm text-gray-300 hover:text-white transition-colors",
+          isActive ? "bg-blue-600 text-white" : "hover:bg-blue-600/10",
           collapsed && "justify-center"
         )}
       >
@@ -106,11 +104,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     return sidebarConfig.dashboard.sections.map((section) => (
       <div key={section.title} className="mb-6">
         {!collapsed && (
-          <h3 className="px-4 mb-2 text-xs font-semibold text-gray-400">
+          <h3 className="px-4 mb-2 text-xs font-medium uppercase text-gray-400">
             {section.title}
           </h3>
         )}
-        <div className="space-y-1">
+        <div>
           {section.items.map(item => renderSidebarItem(item, sidebarConfig.dashboard.path))}
         </div>
       </div>
@@ -124,7 +122,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         collapsed ? "w-[70px]" : "w-[250px]"
       )}
     >
-      <div className="p-4 flex items-center justify-between">
+      <div className="h-[64px] px-4 flex items-center justify-between">
         {!collapsed && (
           <h2 className="font-semibold text-xl text-white">SeguroHub</h2>
         )}
@@ -133,7 +131,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           size="icon" 
           onClick={onToggle} 
           className={cn(
-            "text-gray-400 hover:text-white hover:bg-blue-600/20",
+            "text-gray-400 hover:text-white hover:bg-transparent",
             collapsed && "mx-auto"
           )}
         >
@@ -141,12 +139,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </Button>
       </div>
 
-      <div className="px-4 py-2">
+      <div className="px-4">
         <Link
           to="/dashboard"
           className={cn(
-            "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white rounded-md transition-colors",
-            location.pathname === "/dashboard" && "bg-blue-600 text-white"
+            "flex items-center h-[40px] px-4 text-sm text-gray-300 hover:text-white transition-colors",
+            location.pathname === "/dashboard" ? "bg-blue-600 text-white" : "hover:bg-blue-600/10",
+            collapsed && "justify-center"
           )}
         >
           <Home className="h-5 w-5" />
