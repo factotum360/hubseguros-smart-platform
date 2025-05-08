@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -12,20 +11,23 @@ import {
   Users,
   ShoppingCart,
   UserPlus,
-  CheckSquare,
+  ClipboardList,
   Calendar,
   BarChart2,
-  File,
+  Receipt,
   GitBranch,
   Landmark,
   LineChart,
   Folder,
-  Settings
+  Settings,
+  Home,
+  Bell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { SIDEBAR_CONFIG } from "@/config/sidebarConfig";
+import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebar.config";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -45,130 +47,116 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   if (!sidebarConfig) return null;
 
   const getIcon = (iconName?: string) => {
+    const iconProps = { className: "h-5 w-5" };
+    
     switch (iconName) {
-      case 'ShieldCheck': return <ShieldCheck className="h-5 w-5" />;
-      case 'AlertTriangle': return <AlertTriangle className="h-5 w-5" />;
-      case 'DollarSign': return <DollarSign className="h-5 w-5" />;
-      case 'FileText': return <FileText className="h-5 w-5" />;
-      case 'Calculator': return <Calculator className="h-5 w-5" />;
-      case 'Users': return <Users className="h-5 w-5" />;
-      case 'ShoppingCart': return <ShoppingCart className="h-5 w-5" />;
-      case 'UserPlus': return <UserPlus className="h-5 w-5" />;
-      case 'CheckSquare': return <CheckSquare className="h-5 w-5" />;
-      case 'Calendar': return <Calendar className="h-5 w-5" />;
-      case 'BarChart2': return <BarChart2 className="h-5 w-5" />;
-      case 'File': return <File className="h-5 w-5" />;
-      case 'GitBranch': return <GitBranch className="h-5 w-5" />;
-      case 'Landmark': return <Landmark className="h-5 w-5" />;
-      case 'LineChart': return <LineChart className="h-5 w-5" />;
-      case 'Folder': return <Folder className="h-5 w-5" />;
-      case 'Settings': return <Settings className="h-5 w-5" />;
-      default: return <FileText className="h-5 w-5" />;
+      case 'Home': return <Home {...iconProps} />;
+      case 'ShieldCheck': return <ShieldCheck {...iconProps} />;
+      case 'AlertTriangle': return <AlertTriangle {...iconProps} />;
+      case 'DollarSign': return <DollarSign {...iconProps} />;
+      case 'FileText': return <FileText {...iconProps} />;
+      case 'Calculator': return <Calculator {...iconProps} />;
+      case 'Users': return <Users {...iconProps} />;
+      case 'ShoppingCart': return <ShoppingCart {...iconProps} />;
+      case 'UserPlus': return <UserPlus {...iconProps} />;
+      case 'ClipboardList': return <ClipboardList {...iconProps} />;
+      case 'Calendar': return <Calendar {...iconProps} />;
+      case 'BarChart2': return <BarChart2 {...iconProps} />;
+      case 'Receipt': return <Receipt {...iconProps} />;
+      case 'GitBranch': return <GitBranch {...iconProps} />;
+      case 'Landmark': return <Landmark {...iconProps} />;
+      case 'LineChart': return <LineChart {...iconProps} />;
+      case 'Folder': return <Folder {...iconProps} />;
+      case 'Settings': return <Settings {...iconProps} />;
+      case 'Bell': return <Bell {...iconProps} />;
+      default: return <FileText {...iconProps} />;
     }
   };
-
-  const toggleSection = (title: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [title]: !prev[title]
-    }));
-  };
   
-  const dashboardPath = sidebarConfig.dashboard.path;
-  const basePath = dashboardPath;
+  const renderSidebarItem = (item: SidebarItem, basePath: string) => {
+    const itemPath = `${basePath}/${item.key}`;
+    const isActive = location.pathname === itemPath || 
+                    location.pathname.startsWith(`${itemPath}/`);
+    
+    return (
+      <Link
+        key={item.key}
+        to={itemPath}
+        className={cn(
+          "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors",
+          isActive && "bg-blue-600 text-white",
+          collapsed && "justify-center"
+        )}
+      >
+        <span className={cn(
+          "flex items-center",
+          !collapsed && "min-w-[24px]"
+        )}>
+          {getIcon(item.icon)}
+        </span>
+        
+        {!collapsed && (
+          <span className="ml-3 truncate">{item.label}</span>
+        )}
+      </Link>
+    );
+  };
 
   const renderSidebarSections = () => {
-    return sidebarConfig.dashboard.sections.map((section) => {
-      const isExpanded = expandedSections[section.title] || false;
-
-      return (
-        <div key={section.title} className="mb-4">
-          {!collapsed && (
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full justify-between text-xs font-bold text-muted-foreground",
-                collapsed && "px-2"
-              )}
-              onClick={() => toggleSection(section.title)}
-            >
-              <span>{section.title}</span>
-              <ChevronDown 
-                className={cn(
-                  "h-4 w-4 transition-transform", 
-                  isExpanded && "transform rotate-180"
-                )} 
-              />
-            </Button>
-          )}
-          
-          <div className={cn(
-            "mt-1 space-y-1",
-            collapsed ? "block" : (isExpanded ? "block" : "hidden")
-          )}>
-            {section.items.map(item => {
-              const itemPath = `${basePath}/${item.key}`;
-              const isActive = location.pathname === itemPath || 
-                              location.pathname.startsWith(`${itemPath}/`);
-              
-              return (
-                <TooltipProvider key={item.key} delayDuration={300}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        to={itemPath}
-                        className={cn(
-                          "flex items-center px-3 py-2 rounded-md text-sm",
-                          isActive
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
-                          collapsed && "justify-center px-2"
-                        )}
-                      >
-                        {getIcon(item.icon)}
-                        {!collapsed && <span className="ml-3 truncate">{item.label}</span>}
-                      </Link>
-                    </TooltipTrigger>
-                    {collapsed && (
-                      <TooltipContent side="right">{item.label}</TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
-              );
-            })}
-          </div>
+    return sidebarConfig.dashboard.sections.map((section) => (
+      <div key={section.title} className="mb-6">
+        {!collapsed && (
+          <h3 className="px-4 mb-2 text-xs font-semibold text-gray-400">
+            {section.title}
+          </h3>
+        )}
+        <div className="space-y-1">
+          {section.items.map(item => renderSidebarItem(item, sidebarConfig.dashboard.path))}
         </div>
-      );
-    });
+      </div>
+    ));
   };
 
   return (
     <div
       className={cn(
-        "border-r h-screen flex flex-col bg-sidebar transition-all duration-300",
+        "h-screen flex flex-col bg-[#1B2437] transition-all duration-300",
         collapsed ? "w-[70px]" : "w-[250px]"
       )}
     >
-      <div className="p-4 border-b flex items-center justify-between">
+      <div className="p-4 flex items-center justify-between">
         {!collapsed && (
-          <h2 className="font-semibold text-xl text-hubseguros-primary">HubSeguros</h2>
+          <h2 className="font-semibold text-xl text-white">SeguroHub</h2>
         )}
-        <Button variant="ghost" size="icon" onClick={onToggle} className={cn(collapsed && "mx-auto")}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onToggle} 
+          className={cn(
+            "text-gray-400 hover:text-white hover:bg-blue-600/20",
+            collapsed && "mx-auto"
+          )}
+        >
           <Menu className="h-5 w-5" />
         </Button>
       </div>
 
-      <ScrollArea className="flex-1 px-3 py-4">
+      <div className="px-4 py-2">
+        <Link
+          to="/dashboard"
+          className={cn(
+            "flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-blue-600 hover:text-white rounded-md transition-colors",
+            location.pathname === "/dashboard" && "bg-blue-600 text-white"
+          )}
+        >
+          <Home className="h-5 w-5" />
+          {!collapsed && <span className="ml-3">Dashboard</span>}
+        </Link>
+      </div>
+
+      <ScrollArea className="flex-1 py-4">
         {renderSidebarSections()}
       </ScrollArea>
-
-      <div className="p-4 border-t">
-        {!collapsed && (
-          <div className="text-xs text-gray-500">
-            {user.name} ({user.role})
-          </div>
-        )}
-      </div>
     </div>
   );
 }
