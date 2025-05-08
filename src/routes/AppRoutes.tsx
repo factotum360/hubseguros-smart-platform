@@ -2,23 +2,30 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { UserRole } from '@/types/user';
 
-// Lazy loading de componentes
-const Login = lazy(() => import('@/components/auth/Login'));
-const Register = lazy(() => import('@/components/auth/Register'));
-const NotFound = lazy(() => import('@/components/NotFound'));
-const Policies = lazy(() => import('@/components/Policies'));
+// Optimización del lazy loading eliminando callbacks innecesarios
+const importPage = (path: string) => lazy(() => import(path));
 
-// Layouts
-const DashboardLayout = lazy(() => import('@/components/layout/DashboardLayout'));
+// Páginas con lazy loading optimizado
+const LoginPage = importPage('@/components/auth/Login');
+const RegisterPage = importPage('@/components/auth/Register');
+const NotFoundPage = importPage('@/components/NotFound');
+const PoliciesPage = importPage('@/components/Policies');
+const DashboardLayout = importPage('@/components/layout/DashboardLayout');
 
-// Rutas protegidas por rol
-const ProtectedRoute = ({ children, allowedRoles }: { 
+// Interfaces TypeScript
+interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles: UserRole[];
+}
+
+// Componente de ruta protegida optimizado
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  allowedRoles 
 }) => {
-  // TODO: Implementar lógica de autenticación
-  const userRole = UserRole.USUARIO; // Temporal, debe venir del contexto de auth
-  const isAuthenticated = true; // Temporal, debe venir del contexto de auth
+  // TODO: Implementar lógica real de autenticación
+  const userRole = UserRole.USUARIO;
+  const isAuthenticated = true;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -31,14 +38,15 @@ const ProtectedRoute = ({ children, allowedRoles }: {
   return <>{children}</>;
 };
 
-export const AppRoutes = () => {
+// Componente principal de rutas
+const AppRoutes: React.FC = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/policies" element={<Policies />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/policies" element={<PoliciesPage />} />
 
         {/* Rutas de Usuario */}
         <Route
@@ -75,6 +83,7 @@ export const AppRoutes = () => {
                   <Route path="leads" element={<div>Leads</div>} />
                   <Route path="tareas" element={<div>Tareas</div>} />
                   <Route path="calendario" element={<div>Calendario</div>} />
+                  <Route path="notificaciones" element={<div>Notificaciones</div>} />
                   <Route path="estadisticas" element={<div>Estadísticas</div>} />
                   <Route path="cotizaciones" element={<div>Cotizaciones</div>} />
                   <Route path="facturas" element={<div>Facturas</div>} />
@@ -114,7 +123,7 @@ export const AppRoutes = () => {
 
         {/* Ruta por defecto y 404 */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
