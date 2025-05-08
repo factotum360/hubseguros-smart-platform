@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +16,14 @@ import UserDashboard from "./pages/dashboards/UserDashboard";
 import AgentDashboard from "./pages/dashboards/AgentDashboard";
 import AgencyDashboard from "./pages/dashboards/AgencyDashboard";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -27,37 +33,46 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes */}
+            {/* Rutas públicas */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/iniciar-sesion" element={<Login />} />
+            <Route path="/registro" element={<Register />} />
             
-            {/* Protected routes */}
+            {/* Rutas protegidas */}
             <Route element={<ProtectedRoute />}>
               <Route element={<MainLayout />}>
-                {/* Default dashboard redirect */}
+                {/* Dashboard principal y redirección por defecto */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/polizas" element={<Policies />} />
                 
-                {/* Role-specific routes */}
-                {/* Usuario routes */}
-                <Route path="/usuario/dashboard" element={<UserDashboard />} />
-                <Route path="/usuario/dashboard/:section" element={<UserDashboard />} />
+                {/* Rutas específicas por rol */}
+                {/* Rutas de Usuario */}
+                <Route path="/usuario">
+                  <Route index element={<Navigate to="/usuario/dashboard" />} />
+                  <Route path="dashboard" element={<UserDashboard />} />
+                  <Route path="dashboard/:section" element={<UserDashboard />} />
+                </Route>
                 
-                {/* Agente routes */}
-                <Route path="/agente/dashboard" element={<AgentDashboard />} />
-                <Route path="/agente/dashboard/:section" element={<AgentDashboard />} />
+                {/* Rutas de Agente */}
+                <Route path="/agente">
+                  <Route index element={<Navigate to="/agente/dashboard" />} />
+                  <Route path="dashboard" element={<AgentDashboard />} />
+                  <Route path="dashboard/:section" element={<AgentDashboard />} />
+                </Route>
                 
-                {/* Agencia routes */}
-                <Route path="/agencia/dashboard" element={<AgencyDashboard />} />
-                <Route path="/agencia/dashboard/:section" element={<AgencyDashboard />} />
+                {/* Rutas de Agencia */}
+                <Route path="/agencia">
+                  <Route index element={<Navigate to="/agencia/dashboard" />} />
+                  <Route path="dashboard" element={<AgencyDashboard />} />
+                  <Route path="dashboard/:section" element={<AgencyDashboard />} />
+                </Route>
                 
-                {/* Catch all protected routes */}
-                <Route path="*" element={<Navigate to="/dashboard" />} />
+                {/* Captura todas las rutas protegidas no definidas */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>
             </Route>
             
-            {/* Catch all */}
+            {/* Captura de rutas no encontradas */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
