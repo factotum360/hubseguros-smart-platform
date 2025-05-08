@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  ChevronDown, 
-  DashboardIcon,
-  ShieldCheckIcon,
-  UsersIcon,
-  BarChartIcon,
+  ChevronDown,
+  LayoutDashboard,
+  ShieldCheck,
+  Users,
+  BarChart,
   Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,15 +32,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const getIcon = (iconName?: string) => {
     switch (iconName) {
       case 'DashboardOutlined':
-        return <DashboardIcon className="h-5 w-5" />;
+        return <LayoutDashboard className="h-5 w-5" />;
       case 'SecurityScanOutlined':
-        return <ShieldCheckIcon className="h-5 w-5" />;
+        return <ShieldCheck className="h-5 w-5" />;
       case 'FundOutlined':
-        return <BarChartIcon className="h-5 w-5" />;
+        return <BarChart className="h-5 w-5" />;
       case 'AreaChartOutlined':
-        return <BarChartIcon className="h-5 w-5" />;
+        return <BarChart className="h-5 w-5" />;
       default:
-        return <DashboardIcon className="h-5 w-5" />;
+        return <LayoutDashboard className="h-5 w-5" />;
     }
   };
 
