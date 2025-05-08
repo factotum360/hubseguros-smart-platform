@@ -13,6 +13,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Policies from "./pages/Policies";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import UserDashboard from "./pages/dashboards/UserDashboard";
+import AgentDashboard from "./pages/dashboards/AgentDashboard";
+import AgencyDashboard from "./pages/dashboards/AgencyDashboard";
 
 const queryClient = new QueryClient();
 
@@ -32,8 +35,24 @@ const App = () => (
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route element={<MainLayout />}>
+                {/* Default dashboard redirect */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/polizas" element={<Policies />} />
+                
+                {/* Role-specific routes */}
+                {/* Usuario routes */}
+                <Route path="/usuario/dashboard" element={<UserDashboard />} />
+                <Route path="/usuario/dashboard/:section" element={<UserDashboard />} />
+                
+                {/* Agente routes */}
+                <Route path="/agente/dashboard" element={<AgentDashboard />} />
+                <Route path="/agente/dashboard/:section" element={<AgentDashboard />} />
+                
+                {/* Agencia routes */}
+                <Route path="/agencia/dashboard" element={<AgencyDashboard />} />
+                <Route path="/agencia/dashboard/:section" element={<AgencyDashboard />} />
+                
+                {/* Catch all protected routes */}
                 <Route path="*" element={<Navigate to="/dashboard" />} />
               </Route>
             </Route>

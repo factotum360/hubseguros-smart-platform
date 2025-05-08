@@ -2,18 +2,32 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  ChevronDown,
-  LayoutDashboard,
+  ChevronDown, 
+  Menu,
   ShieldCheck,
+  AlertTriangle,
+  DollarSign,
+  FileText,
+  Calculator,
   Users,
-  BarChart,
-  Menu
+  ShoppingCart,
+  UserPlus,
+  CheckSquare,
+  Calendar,
+  BarChart2,
+  File,
+  GitBranch,
+  Landmark,
+  LineChart,
+  Folder,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
-import { SIDEBAR_CONFIG, SidebarItem } from "@/config/sidebarConfig";
+import { SIDEBAR_CONFIG } from "@/config/sidebarConfig";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -23,98 +37,106 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user } = useAuth();
   const location = useLocation();
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
   if (!user) return null;
 
-  const sidebarItems = SIDEBAR_CONFIG[user.role] || [];
+  const sidebarConfig = SIDEBAR_CONFIG[user.role] || null;
+  if (!sidebarConfig) return null;
 
   const getIcon = (iconName?: string) => {
     switch (iconName) {
-      case 'DashboardOutlined':
-        return <LayoutDashboard className="h-5 w-5" />;
-      case 'SecurityScanOutlined':
-        return <ShieldCheck className="h-5 w-5" />;
-      case 'FundOutlined':
-        return <BarChart className="h-5 w-5" />;
-      case 'AreaChartOutlined':
-        return <BarChart className="h-5 w-5" />;
-      default:
-        return <LayoutDashboard className="h-5 w-5" />;
+      case 'ShieldCheck': return <ShieldCheck className="h-5 w-5" />;
+      case 'AlertTriangle': return <AlertTriangle className="h-5 w-5" />;
+      case 'DollarSign': return <DollarSign className="h-5 w-5" />;
+      case 'FileText': return <FileText className="h-5 w-5" />;
+      case 'Calculator': return <Calculator className="h-5 w-5" />;
+      case 'Users': return <Users className="h-5 w-5" />;
+      case 'ShoppingCart': return <ShoppingCart className="h-5 w-5" />;
+      case 'UserPlus': return <UserPlus className="h-5 w-5" />;
+      case 'CheckSquare': return <CheckSquare className="h-5 w-5" />;
+      case 'Calendar': return <Calendar className="h-5 w-5" />;
+      case 'BarChart2': return <BarChart2 className="h-5 w-5" />;
+      case 'File': return <File className="h-5 w-5" />;
+      case 'GitBranch': return <GitBranch className="h-5 w-5" />;
+      case 'Landmark': return <Landmark className="h-5 w-5" />;
+      case 'LineChart': return <LineChart className="h-5 w-5" />;
+      case 'Folder': return <Folder className="h-5 w-5" />;
+      case 'Settings': return <Settings className="h-5 w-5" />;
+      default: return <FileText className="h-5 w-5" />;
     }
   };
 
-  const toggleExpandItem = (key: string) => {
-    setExpandedItems(prev => ({
+  const toggleSection = (title: string) => {
+    setExpandedSections(prev => ({
       ...prev,
-      [key]: !prev[key]
+      [title]: !prev[title]
     }));
   };
+  
+  const dashboardPath = sidebarConfig.dashboard.path;
+  const basePath = dashboardPath;
 
-  const renderSidebarItems = (items: SidebarItem[]) => {
-    return items.map((item) => {
-      const isActive = location.pathname === item.path || 
-                      (item.children && item.children.some(child => location.pathname === child.path));
-      const isExpanded = expandedItems[item.key];
+  const renderSidebarSections = () => {
+    return sidebarConfig.dashboard.sections.map((section) => {
+      const isExpanded = expandedSections[section.title] || false;
 
       return (
-        <div key={item.key} className="mb-2">
-          {item.children ? (
-            <>
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full justify-between",
-                  isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
-                  collapsed && "px-2"
-                )}
-                onClick={() => toggleExpandItem(item.key)}
-              >
-                <div className="flex items-center">
-                  {getIcon(item.icon)}
-                  {!collapsed && <span className="ml-2">{item.label}</span>}
-                </div>
-                {!collapsed && (
-                  <ChevronDown 
-                    className={cn(
-                      "h-4 w-4 transition-transform", 
-                      isExpanded && "transform rotate-180"
-                    )} 
-                  />
-                )}
-              </Button>
-              {isExpanded && !collapsed && (
-                <div className="pl-9 mt-1 space-y-1">
-                  {item.children.map(child => (
-                    <Link
-                      key={child.key}
-                      to={child.path || "#"}
-                      className={cn(
-                        "block px-2 py-1 rounded-md text-sm",
-                        location.pathname === child.path && "bg-sidebar-accent/50 font-medium"
-                      )}
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
+        <div key={section.title} className="mb-4">
+          {!collapsed && (
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-between text-xs font-bold text-muted-foreground",
+                collapsed && "px-2"
               )}
-            </>
-          ) : (
-            <Link to={item.path || "#"}>
-              <Button
-                variant="ghost"
+              onClick={() => toggleSection(section.title)}
+            >
+              <span>{section.title}</span>
+              <ChevronDown 
                 className={cn(
-                  "w-full justify-start",
-                  isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
-                  collapsed && "px-2"
-                )}
-              >
-                {getIcon(item.icon)}
-                {!collapsed && <span className="ml-2">{item.label}</span>}
-              </Button>
-            </Link>
+                  "h-4 w-4 transition-transform", 
+                  isExpanded && "transform rotate-180"
+                )} 
+              />
+            </Button>
           )}
+          
+          <div className={cn(
+            "mt-1 space-y-1",
+            collapsed ? "block" : (isExpanded ? "block" : "hidden")
+          )}>
+            {section.items.map(item => {
+              const itemPath = `${basePath}/${item.key}`;
+              const isActive = location.pathname === itemPath || 
+                              location.pathname.startsWith(`${itemPath}/`);
+              
+              return (
+                <TooltipProvider key={item.key} delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={itemPath}
+                        className={cn(
+                          "flex items-center px-3 py-2 rounded-md text-sm",
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
+                          collapsed && "justify-center px-2"
+                        )}
+                      >
+                        {getIcon(item.icon)}
+                        {!collapsed && <span className="ml-3 truncate">{item.label}</span>}
+                      </Link>
+                    </TooltipTrigger>
+                    {collapsed && (
+                      <TooltipContent side="right">{item.label}</TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })}
+          </div>
         </div>
       );
     });
@@ -131,13 +153,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <h2 className="font-semibold text-xl text-hubseguros-primary">HubSeguros</h2>
         )}
-        <Button variant="ghost" size="icon" onClick={onToggle} className="ml-auto">
+        <Button variant="ghost" size="icon" onClick={onToggle} className={cn(collapsed && "mx-auto")}>
           <Menu className="h-5 w-5" />
         </Button>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
-        {renderSidebarItems(sidebarItems)}
+        {renderSidebarSections()}
       </ScrollArea>
 
       <div className="p-4 border-t">

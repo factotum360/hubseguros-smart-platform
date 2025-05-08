@@ -1,106 +1,129 @@
 
 import { UserRole } from "@/types/user";
 
+export interface SidebarSection {
+  title: string;
+  items: SidebarItem[];
+}
+
 export interface SidebarItem {
   key: string;
-  icon?: string;
   label: string;
+  icon?: string;
   path?: string;
   children?: SidebarItem[];
 }
 
-export type SidebarConfig = Record<UserRole, SidebarItem[]>;
+export type SidebarConfig = Record<UserRole, {
+  dashboard: {
+    path: string;
+    sections: SidebarSection[];
+  }
+}>;
 
 export const SIDEBAR_CONFIG: SidebarConfig = {
-  [UserRole.USUARIO]: [
-    {
-      key: 'dashboard',
-      icon: 'DashboardOutlined',
-      label: 'Panel Principal',
-      path: '/dashboard',
-      children: [
-        { key: 'resumen', label: 'Resumen General', path: '/dashboard/resumen' },
-        { key: 'vencimientos', label: 'Próximos Vencimientos', path: '/dashboard/vencimientos' }
-      ]
-    },
-    {
-      key: 'polizas',
-      icon: 'SecurityScanOutlined',
-      label: 'Mis Pólizas',
-      path: '/polizas',
-      children: [
-        { key: 'activas', label: 'Pólizas Activas', path: '/polizas/activas' },
-        { key: 'renovaciones', label: 'Por Renovar', path: '/polizas/renovaciones' },
-        { key: 'historico', label: 'Histórico', path: '/polizas/historico' }
+  [UserRole.USUARIO]: {
+    dashboard: {
+      path: '/usuario/dashboard',
+      sections: [
+        {
+          title: 'PRINCIPALES',
+          items: [
+            { key: 'mis-polizas', label: 'Mis Pólizas', icon: 'ShieldCheck' },
+            { key: 'siniestros', label: 'Siniestros', icon: 'AlertTriangle' },
+            { key: 'pagos', label: 'Pagos', icon: 'DollarSign' }
+          ]
+        },
+        {
+          title: 'GESTIÓN',
+          items: [
+            { key: 'documentos', label: 'Documentos', icon: 'FileText' },
+            { key: 'cotizaciones', label: 'Cotizaciones', icon: 'Calculator' }
+          ]
+        }
       ]
     }
-  ],
+  },
   
-  [UserRole.AGENTE]: [
-    {
-      key: 'dashboard',
-      icon: 'FundOutlined',
-      label: 'Dashboard',
-      path: '/dashboard',
-      children: [
-        { key: 'metricas', label: 'Métricas Principales', path: '/dashboard/metricas' },
-        { key: 'comisiones', label: 'Comisiones', path: '/dashboard/comisiones' }
-      ]
-    },
-    {
-      key: 'clientes',
-      icon: 'SecurityScanOutlined',
-      label: 'Clientes',
-      path: '/clientes',
-      children: [
-        { key: 'lista', label: 'Listado', path: '/clientes/lista' },
-        { key: 'nuevo', label: 'Nuevo Cliente', path: '/clientes/nuevo' }
-      ]
-    },
-    {
-      key: 'polizas',
-      icon: 'SecurityScanOutlined',
-      label: 'Pólizas',
-      path: '/polizas',
-      children: [
-        { key: 'activas', label: 'Activas', path: '/polizas/activas' },
-        { key: 'vencimientos', label: 'Vencimientos', path: '/polizas/vencimientos' },
-        { key: 'nuevas', label: 'Nueva Póliza', path: '/polizas/nueva' }
+  [UserRole.AGENTE]: {
+    dashboard: {
+      path: '/agente/dashboard',
+      sections: [
+        {
+          title: 'PRINCIPALES',
+          items: [
+            { key: 'clientes', label: 'Clientes', icon: 'Users' },
+            { key: 'polizas', label: 'Pólizas', icon: 'ShieldCheck' },
+            { key: 'siniestros', label: 'Siniestros', icon: 'AlertTriangle' },
+            { key: 'ventas', label: 'Ventas', icon: 'ShoppingCart' },
+            { key: 'cobros', label: 'Cobros', icon: 'DollarSign' }
+          ]
+        },
+        {
+          title: 'GESTIÓN',
+          items: [
+            { key: 'leads', label: 'Leads', icon: 'UserPlus' },
+            { key: 'tareas', label: 'Tareas', icon: 'CheckSquare' },
+            { key: 'calendario', label: 'Calendario', icon: 'Calendar' }
+          ]
+        },
+        {
+          title: 'REPORTES',
+          items: [
+            { key: 'estadisticas', label: 'Estadísticas', icon: 'BarChart2' },
+            { key: 'cotizaciones', label: 'Cotizaciones', icon: 'FileText' },
+            { key: 'facturas', label: 'Facturas', icon: 'File' }
+          ]
+        }
       ]
     }
-  ],
+  },
 
-  [UserRole.AGENCIA]: [
-    {
-      key: 'dashboard',
-      icon: 'AreaChartOutlined',
-      label: 'Dashboard Ejecutivo',
-      path: '/dashboard',
-      children: [
-        { key: 'general', label: 'Vista General', path: '/dashboard/general' },
-        { key: 'financiero', label: 'Financiero', path: '/dashboard/financiero' }
-      ]
-    },
-    {
-      key: 'agentes',
-      icon: 'SecurityScanOutlined',
-      label: 'Agentes',
-      path: '/agentes',
-      children: [
-        { key: 'lista', label: 'Listado', path: '/agentes/lista' },
-        { key: 'nuevo', label: 'Nuevo Agente', path: '/agentes/nuevo' },
-        { key: 'rendimiento', label: 'Rendimiento', path: '/agentes/rendimiento' }
-      ]
-    },
-    {
-      key: 'polizas',
-      icon: 'SecurityScanOutlined',
-      label: 'Pólizas',
-      path: '/polizas',
-      children: [
-        { key: 'resumen', label: 'Resumen', path: '/polizas/resumen' },
-        { key: 'reportes', label: 'Reportes', path: '/polizas/reportes' }
+  [UserRole.AGENCIA]: {
+    dashboard: {
+      path: '/agencia/dashboard',
+      sections: [
+        {
+          title: 'PRINCIPALES',
+          items: [
+            { key: 'clientes', label: 'Clientes', icon: 'Users' },
+            { key: 'polizas', label: 'Pólizas', icon: 'ShieldCheck' },
+            { key: 'siniestros', label: 'Siniestros', icon: 'AlertTriangle' },
+            { key: 'ventas', label: 'Ventas', icon: 'ShoppingCart' },
+            { key: 'cobros', label: 'Cobros', icon: 'DollarSign' }
+          ]
+        },
+        {
+          title: 'GESTIÓN',
+          items: [
+            { key: 'leads', label: 'Leads', icon: 'UserPlus' },
+            { key: 'agentes', label: 'Agentes', icon: 'Users' },
+            { key: 'ramos', label: 'Ramos', icon: 'GitBranch' },
+            { key: 'aseguradoras', label: 'Aseguradoras', icon: 'Landmark' }
+          ]
+        },
+        {
+          title: 'REPORTES',
+          items: [
+            { key: 'estadisticas', label: 'Estadísticas', icon: 'LineChart' },
+            { key: 'cotizaciones', label: 'Cotizaciones', icon: 'FileText' },
+            { key: 'archivos', label: 'Archivos', icon: 'Folder' },
+            { key: 'facturas', label: 'Facturas', icon: 'File' }
+          ]
+        },
+        {
+          title: 'SISTEMA',
+          items: [
+            { key: 'configuracion', label: 'Configuración', icon: 'Settings' }
+          ]
+        }
       ]
     }
-  ]
+  }
 };
+
+// Helper function to get full path for a section item
+export function getItemPath(role: UserRole, sectionKey: string, itemKey: string): string {
+  const basePath = SIDEBAR_CONFIG[role].dashboard.path;
+  return `${basePath}/${sectionKey}/${itemKey}`;
+}
