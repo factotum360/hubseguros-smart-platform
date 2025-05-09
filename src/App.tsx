@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +11,7 @@ import { UserRole } from "@/types/user";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Lazy-loaded page components for better performance
+const Home = lazy(() => import("./pages/Home")); // Agregamos Home
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -48,7 +48,8 @@ const App = () => (
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<Navigate to="/iniciar-sesion" replace />} />
+              <Route path="/" element={<Home />} /> {/* Landing page */}
+              <Route path="/home" element={<Home />} /> {/* Ruta alternativa */}
               <Route path="/iniciar-sesion" element={<Login />} />
               <Route path="/registro" element={<Register />} />
 
