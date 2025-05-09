@@ -6,7 +6,6 @@ import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { UserRole } from "@/types/user";
-import { ErrorBoundary } from "react-error-boundary";
 import { AlertCircle } from "lucide-react";
 
 // Map of default routes by user role
@@ -79,11 +78,9 @@ export function MainLayout() {
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">
-            <Outlet />
-          </main>
-        </ErrorBoundary>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
