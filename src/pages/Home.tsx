@@ -1,11 +1,12 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, BarChart3, Clock, Layers, HandCoins, Headphones } from "lucide-react";
 
 const Home = () => {
-  // Efecto para el scroll suave (se mantiene igual)
+  // Efecto para el scroll suave
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLAnchorElement;
@@ -29,18 +30,59 @@ const Home = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header (se mantiene igual) */}
+      {/* Navbar */}
       <header className="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm border-b z-50">
-        {/* ... código del header ... */}
+        <div className="container mx-auto px-4 flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="text-xl font-bold text-hubseguros-primary">HubSeguros</Link>
+          </div>
+          <nav className="hidden md:flex space-x-8">
+            <Link to="#caracteristicas" className="text-gray-600 hover:text-hubseguros-primary">Características</Link>
+            <Link to="#beneficios" className="text-gray-600 hover:text-hubseguros-primary">Beneficios</Link>
+            <Link to="#soluciones" className="text-gray-600 hover:text-hubseguros-primary">Soluciones</Link>
+          </nav>
+          <div className="flex items-center space-x-4">
+            <Link to="/iniciar-sesion" className="text-hubseguros-primary hover:text-blue-700">Iniciar sesión</Link>
+            <Button className="bg-hubseguros-primary hover:bg-blue-700">
+              Solicitar demo
+            </Button>
+          </div>
+        </div>
       </header>
 
-      {/* Hero Section (se mantiene igual) */}
+      {/* Hero Section con imagen de dashboard */}
       <motion.section 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-b from-gray-50 to-white pt-32 pb-20"
+        className="pt-28 pb-16 md:pt-32 md:pb-24"
       >
-        {/* ... código del hero ... */}
+        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              La plataforma que simplifica tu trabajo como agente de seguros
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              Gestiona clientes, pólizas y siniestros en un solo lugar. Ahorra tiempo y aumenta tu productividad.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button className="bg-hubseguros-primary hover:bg-blue-700 text-white px-6 py-2.5">
+                Comenzar ahora
+              </Button>
+              <Button variant="outline" className="border-gray-300 hover:bg-gray-100">
+                Solicitar una demo
+              </Button>
+            </div>
+          </div>
+          <div className="mt-8 md:mt-0 relative">
+            <div className="shadow-2xl rounded-lg overflow-hidden border border-gray-200">
+              <img 
+                src="/lovable-uploads/ae7b92f4-1acf-430c-941e-cb16612b12bf.png" 
+                alt="Dashboard de HubSeguros" 
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
       </motion.section>
 
       {/* Beneficios Section */}
@@ -62,22 +104,22 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                icon: "📊",
+                icon: <Layers className="h-8 w-8 text-blue-500" />,
                 title: "Organiza tu cartera",
                 description: "Gestiona de forma eficiente tus clientes, pólizas y siniestros en una sola plataforma integrada."
               },
               {
-                icon: "⏱️",
+                icon: <Clock className="h-8 w-8 text-blue-500" />,
                 title: "Ahorra tiempo",
                 description: "Automatiza tareas repetitivas y procesos administrativos para centrarte en lo que realmente importa."
               },
               {
-                icon: "📈",
+                icon: <BarChart3 className="h-8 w-8 text-blue-500" />,
                 title: "Impulsa tus ventas",
                 description: "Identifica oportunidades de venta cruzada y seguimiento de renovaciones para aumentar tu cartera."
               },
               {
-                icon: "👥",
+                icon: <Headphones className="h-8 w-8 text-blue-500" />,
                 title: "Soporte humano",
                 description: "Contamos con un equipo de especialistas que te ayudarán en todo momento con cualquier consulta."
               }
@@ -90,7 +132,7 @@ const Home = () => {
                 transition={{ delay: index * 0.2 }}
                 className="p-6 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="text-4xl mb-4">{benefit.icon}</div>
+                <div className="mb-4">{benefit.icon}</div>
                 <h3 className="text-xl font-semibold mb-3">{benefit.title}</h3>
                 <p className="text-gray-600">{benefit.description}</p>
               </motion.div>
