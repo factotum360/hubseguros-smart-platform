@@ -1,9 +1,9 @@
-
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useNavigate } from "react-router-dom";
 import { useEffect, memo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 // Memorized benefits list component
 const BenefitsList = memo(() => (
@@ -49,7 +49,7 @@ const LoginPage = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
@@ -61,20 +61,20 @@ const LoginPage = () => {
       <div className="flex-1 bg-gradient-to-br from-blue-600 to-blue-800 p-6 flex flex-col justify-center items-start">
         <div className="max-w-md mx-auto md:mx-0 md:ml-auto text-white space-y-6">
           <h1 className="text-4xl font-bold tracking-tight">
-            Bienvenido a HubSeguros
+            Accede a tu cuenta
           </h1>
           <p className="text-lg font-medium opacity-90">
-            La plataforma digital para gestionar y hacer crecer tu negocio de seguros.
+            Gestiona y haz crecer tu negocio de seguros desde cualquier lugar.
           </p>
           <BenefitsList />
         </div>
       </div>
 
       {/* Right section - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100">
+        <Card className="w-full max-w-md p-8 bg-white/95 backdrop-blur-sm shadow-xl">
           <LoginForm />
-        </div>
+        </Card>
       </div>
     </div>
   );
