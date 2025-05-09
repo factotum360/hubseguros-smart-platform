@@ -1,7 +1,9 @@
+
 export enum UserRole {
   USUARIO = 'USUARIO',
   AGENTE = 'AGENTE',
-  AGENCIA = 'AGENCIA'
+  AGENCIA = 'AGENCIA',
+  ADMIN = 'ADMIN'
 }
 
 export enum UserLevel {
@@ -23,7 +25,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  level: UserLevel;
+  level: string;
   status?: UserStatus; // Hecho opcional para mantener compatibilidad
   phone?: string;
   avatar?: string;

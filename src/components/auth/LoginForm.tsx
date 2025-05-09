@@ -8,30 +8,48 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 interface LoginFormData {
   email: string;
   password: string;
   showPassword: boolean;
+  rememberMe: boolean;
+}
+
+interface FormErrors {
+  email?: string;
+  password?: string;
 }
 
 export function LoginForm() {
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
-    showPassword: false
+    showPassword: false,
+    rememberMe: false
   });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
+    
+    // Clear error on change
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -41,21 +59,29 @@ export function LoginForm() {
     }));
   };
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "El correo electrónico es requerido";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Ingresa un correo electrónico válido";
+    }
+    
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "La contraseña es requerida";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      toast.error("Por favor ingresa tu correo y contraseña");
-      return;
-    }
-
-    if (!validateEmail(formData.email)) {
-      toast.error("Por favor ingresa un correo electrónico válido");
+    if (!validateForm()) {
       return;
     }
     
@@ -63,10 +89,9 @@ export function LoginForm() {
     
     try {
       await login(formData.email, formData.password);
-      toast.success("¡Bienvenido a HubSeguros!");
-      navigate("/dashboard", { replace: true });
+      // Note: Navigation is handled in the Login page based on user role
     } catch (error) {
-      toast.error("No pudimos iniciar sesión. Por favor verifica tus credenciales.");
+      // Error is already handled in useAuth hook with toast notifications
       console.error("Error en inicio de sesión:", error);
     } finally {
       setLoading(false);
@@ -84,7 +109,9 @@ export function LoginForm() {
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Correo electrónico</Label>
+            <Label htmlFor="email" className={errors.email ? "text-destructive" : ""}>
+              Correo electrónico
+            </Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
               <Input 
@@ -94,19 +121,23 @@ export function LoginForm() {
                 placeholder="correo@ejemplo.com" 
                 value={formData.email}
                 onChange={handleInputChange}
-                className="pl-10"
+                className={`pl-10 ${errors.email ? "border-destructive" : ""}`}
                 required
                 autoComplete="email"
                 aria-label="Correo electrónico"
               />
             </div>
+            {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
           </div>
+          
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password" className={errors.password ? "text-destructive" : ""}>
+                Contraseña
+              </Label>
               <Link 
                 to="/recuperar-contrasena" 
-                className="text-sm text-hubseguros-primary hover:text-blue-800 transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
               >
                 ¿Olvidaste tu contraseña?
               </Link>
@@ -119,7 +150,7 @@ export function LoginForm() {
                 type={formData.showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleInputChange}
-                className="pl-10"
+                className={`pl-10 ${errors.password ? "border-destructive" : ""}`}
                 required
                 autoComplete="current-password"
                 aria-label="Contraseña"
@@ -148,14 +179,36 @@ export function LoginForm() {
                 </Tooltip>
               </TooltipProvider>
             </div>
+            {errors.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
           </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={handleInputChange}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-600">
+              Recordar mi sesión
+            </label>
+          </div>
+          
           <Button 
             type="submit" 
-            className="w-full bg-hubseguros-primary hover:bg-blue-700 transition-colors"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
             disabled={loading}
           >
             {loading ? "Iniciando sesión..." : "Iniciar sesión"}
           </Button>
+          
+          <div className="text-center text-sm text-gray-500 mt-2">
+            <p>Credenciales de prueba:</p>
+            <p>cliente@hubseguros.com / admin@hubseguros.com / agente@hubseguros.com / agencia@hubseguros.com</p>
+            <p>Contraseña: 1234</p>
+          </div>
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
@@ -163,7 +216,7 @@ export function LoginForm() {
           ¿No tienes una cuenta? 
           <Link 
             to="/registro" 
-            className="ml-1 text-hubseguros-primary hover:text-blue-700 font-medium transition-colors"
+            className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             Regístrate aquí
           </Link>

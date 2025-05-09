@@ -2,39 +2,61 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { UserRole } from "@/types/user";
+import { Loader2 } from "lucide-react";
 
-// Define access control for paths
-const roleAccess: Record<string, UserRole[]> = {
-  '/usuario': [UserRole.USUARIO, UserRole.AGENTE, UserRole.AGENCIA],
-  '/agente': [UserRole.AGENTE, UserRole.AGENCIA],
-  '/agencia': [UserRole.AGENCIA]
+// Define route access levels with role hierarchies
+const ROUTE_ACCESS: Record<string, UserRole[]> = {
+  '/cliente': [UserRole.USUARIO, UserRole.AGENTE, UserRole.AGENCIA, UserRole.ADMIN],
+  '/agente': [UserRole.AGENTE, UserRole.AGENCIA, UserRole.ADMIN],
+  '/agencia': [UserRole.AGENCIA, UserRole.ADMIN],
+  '/admin': [UserRole.ADMIN]
 };
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, user } = useAuth();
+// Home routes by role
+const HOME_ROUTES: Record<UserRole, string> = {
+  [UserRole.USUARIO]: '/cliente/dashboard',
+  [UserRole.AGENTE]: '/agente/dashboard',
+  [UserRole.AGENCIA]: '/agencia/dashboard',
+  [UserRole.ADMIN]: '/admin/dashboard'
+};
+
+interface ProtectedRouteProps {
+  requiredRoles?: UserRole[];
+}
+
+const ProtectedRoute = ({ requiredRoles }: ProtectedRouteProps = {}) => {
+  const { isAuthenticated, user, isLoading, hasPermission } = useAuth();
   const location = useLocation();
 
-  // If the user is not authenticated, redirect to login
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/iniciar-sesion" state={{ from: location }} replace />;
   }
 
-  // Check if user has access to this path based on their role
-  const pathPrefix = '/' + location.pathname.split('/')[1]; // Get first segment of path
-  const allowedRoles = roleAccess[pathPrefix];
+  // If specific roles are required, check permissions
+  if (requiredRoles && requiredRoles.length > 0 && !hasPermission(requiredRoles)) {
+    // User doesn't have the required role, redirect to their home route
+    return <Navigate to={user ? HOME_ROUTES[user.role] : '/iniciar-sesion'} replace />;
+  }
+
+  // Check path-based role access
+  const pathPrefix = '/' + location.pathname.split('/')[1];
+  const allowedRoles = ROUTE_ACCESS[pathPrefix];
   
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    // User doesn't have access to this path, redirect to their role's dashboard
-    const redirectPaths = {
-      [UserRole.USUARIO]: '/usuario/dashboard',
-      [UserRole.AGENTE]: '/agente/dashboard',
-      [UserRole.AGENCIA]: '/agencia/dashboard'
-    };
-    
-    return <Navigate to={redirectPaths[user.role] || '/dashboard'} replace />;
+  if (allowedRoles && user && !hasPermission(allowedRoles)) {
+    return <Navigate to={HOME_ROUTES[user.role]} replace />;
   }
 
-  // User is authenticated and has access
+  // User is authenticated and has proper access
   return <Outlet />;
 };
 

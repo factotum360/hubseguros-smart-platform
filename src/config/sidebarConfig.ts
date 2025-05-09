@@ -1,8 +1,5 @@
-export enum UserRole {
-  USUARIO = 'USUARIO',
-  AGENTE = 'AGENTE',
-  AGENCIA = 'AGENCIA'
-}
+
+import { UserRole } from '@/types/user';
 
 export interface SidebarSection {
   title: string;
@@ -32,8 +29,8 @@ export type SidebarConfig = Record<UserRole, {
 export const SIDEBAR_CONFIG: SidebarConfig = {
   [UserRole.USUARIO]: {
     dashboard: {
-      path: '/usuario/dashboard',
-      title: 'Panel de Usuario',
+      path: '/cliente/dashboard',
+      title: 'Panel de Cliente',
       description: 'Bienvenido a tu panel de control',
       sections: [
         {
@@ -145,6 +142,50 @@ export const SIDEBAR_CONFIG: SidebarConfig = {
           title: 'SISTEMA',
           items: [
             { key: 'configuracion', label: 'Configuración', icon: 'Settings' }
+          ]
+        }
+      ]
+    }
+  },
+
+  [UserRole.ADMIN]: {
+    dashboard: {
+      path: '/admin/dashboard',
+      title: 'Panel de Administración',
+      description: 'Gestión global del sistema',
+      sections: [
+        {
+          title: 'PRINCIPALES',
+          items: [
+            { 
+              key: 'overview', 
+              label: 'Vista General', 
+              icon: 'Home',
+              badge: {
+                value: 'nuevo',
+                variant: 'success'
+              }
+            },
+            { key: 'users', label: 'Usuarios', icon: 'Users' },
+            { key: 'agencies', label: 'Agencias', icon: 'Building' },
+            { key: 'agents', label: 'Agentes', icon: 'UserPlus' }
+          ]
+        },
+        {
+          title: 'SISTEMA',
+          items: [
+            { key: 'roles', label: 'Roles', icon: 'Shield' },
+            { key: 'permissions', label: 'Permisos', icon: 'Lock' },
+            { key: 'logs', label: 'Logs del Sistema', icon: 'FileText' },
+            { key: 'backups', label: 'Copias de Seguridad', icon: 'Database' }
+          ]
+        },
+        {
+          title: 'CONFIGURACIÓN',
+          items: [
+            { key: 'settings', label: 'Configuración Global', icon: 'Settings' },
+            { key: 'integrations', label: 'Integraciones', icon: 'Plug' },
+            { key: 'apikeys', label: 'API Keys', icon: 'Key' }
           ]
         }
       ]
