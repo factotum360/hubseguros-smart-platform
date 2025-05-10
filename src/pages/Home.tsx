@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { CheckCircle2, BarChart3, Clock, Layers, Headphones } from "lucide-react";
 
 const Home = () => {
   // Efecto para el scroll suave
@@ -11,17 +10,17 @@ const Home = () => {
       if (target.hash) {
         e.preventDefault();
         const element = document.querySelector(target.hash);
-        element?.scrollIntoView({ behavior: 'smooth' });
+        element?.scrollIntoView({ behavior: "smooth" });
       }
     };
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', handleAnchorClick);
+      anchor.addEventListener("click", handleAnchorClick);
     });
 
     return () => {
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.removeEventListener('click', handleAnchorClick);
+        anchor.removeEventListener("click", handleAnchorClick);
       });
     };
   }, []);
@@ -65,14 +64,14 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-10 md:mb-0">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight animate-fade-in">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 La plataforma que simplifica tu trabajo como agente de seguros
               </h1>
-              <p className="text-xl text-gray-600 mb-8 animate-fade-in-delay">
+              <p className="text-xl text-gray-600 mb-8">
                 Gestiona clientes, pólizas y siniestros en un solo lugar. 
                 Ahorra tiempo y aumenta tu productividad.
               </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 animate-fade-in-delay-2">
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link to="/registro">
                   <Button className="w-full sm:w-auto bg-hubseguros-primary hover:bg-blue-700 text-base px-8 py-6 transition-colors">
                     Comenzar ahora
@@ -83,7 +82,8 @@ const Home = () => {
                 </Button>
               </div>
             </div>
-            <div className="md:w-1/2 animate-fade-in-delay-3">
+
+            <div className="md:w-1/2">
               <div className="rounded-lg overflow-hidden shadow-2xl border border-gray-200">
                 <div className="bg-gray-800 px-4 py-2 flex items-center space-x-2">
                   <div className="flex space-x-1">
@@ -105,8 +105,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* Resto de las secciones igual que antes... */}
     </div>
   );
 };
