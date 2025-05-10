@@ -1,4 +1,3 @@
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -24,7 +23,9 @@ export default defineConfig(({ mode }) => ({
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx'] // Añadir extensiones soportadas
   },
-  base: '/', // Importante para el routing
+  // ***** ¡¡¡ESTA ES LA LÍNEA QUE DEBE CAMBIAR!!! *****
+  base: '/hubseguros-smart-platform/', // Asegúrate de que esta ruta coincida con el nombre de tu repositorio en GitHub Pages
+  // **************************************************
   build: {
     outDir: 'dist',
     sourcemap: true,
